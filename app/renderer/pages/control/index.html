@@ -2,7 +2,7 @@
  * @Author: yehuozhili
  * @Date: 2020-11-14 22:36:50
  * @LastEditors: yehuozhili
- * @LastEditTime: 2020-11-27 00:24:28
+ * @LastEditTime: 2020-11-27 15:11:54
  * @FilePath: \electroncamp\app\renderer\pages\control\index.html
 -->
 <!DOCTYPE html>
@@ -10,9 +10,21 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>control</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			#screen-video {
+				height: 100%;
+				width: 100%;
+				object-fit: fill;
+			}
+		</style>
 	</head>
 	<body>
-		<h3>pages页面</h3>
+		<h2><video id="screen-video"></video>控制台</h2>
+		<script src="./controled.js"></script>
 	</body>
 </html>

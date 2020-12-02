@@ -1,4 +1,12 @@
+/*
+ * @Author: yehuozhili
+ * @Date: 2020-11-14 22:42:53
+ * @LastEditors: yehuozhili
+ * @LastEditTime: 2020-11-27 23:36:37
+ * @FilePath: \electroncamp\app\renderer\src\main\src\App.js
+ */
 import React, { useState, useEffect } from "react"; //使用hooks
+import "./controll";
 const { ipcRenderer } = window.require("electron"); //引入渲染进程
 
 function App() {
@@ -9,7 +17,6 @@ function App() {
 		//登录状态是在主进程维护，通过主进程来处理ipc事件
 		console.log("111");
 		let code = await ipcRenderer.invoke("login");
-		console.log(setLocalCode(code));
 		if (!code) {
 			return setLocalCode(code);
 		} //本身控制码重新赋值

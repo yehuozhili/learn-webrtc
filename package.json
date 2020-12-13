@@ -4,9 +4,10 @@
 	"description": "",
 	"main": "app/main/index.js",
 	"scripts": {
+		"start:node": "node index.js",
 		"start:render": "cd app/renderer/src/main && npm start",
 		"start:main": "electron .",
-		"start": "concurrently \"npm run start:render\" \" wait-on http://localhost:3000 && npm run start:main\" "
+		"start": "concurrently \"npm run start:node\" \"npm run start:render\" \" wait-on http://localhost:3000 && npm run start:main\" "
 	},
 	"keywords": [],
 	"author": "",
@@ -17,6 +18,7 @@
 		"electron-is-dev": "^1.2.0",
 		"robotjs": "^0.6.0",
 		"vkey": "^1.0.1",
-		"wait-on": "^5.2.0"
+		"wait-on": "^5.2.0",
+		"ws": "^7.4.1"
 	}
 }

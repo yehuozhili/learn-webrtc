@@ -16,6 +16,7 @@ function handleMouse(data) {
 	let { clientX, clientY, screen, video } = data;
 	let x = (clientX * screen.width) / video.width;
 	let y = (clientY * screen.height) / video.height;
+	console.log(x, y);
 	robot.moveMouse(x, y);
 	robot.mouseClick();
 	console.log("mouse", data);
@@ -38,8 +39,6 @@ function handleKey(data) {
 
 module.exports = function () {
 	ipcMain.on("robot", (e, type, data) => {
-		//*******通信**主进程
-		//判断事件类型
 		if (type === "mouse") {
 			//鼠标类型
 			handleMouse(data);

@@ -14,18 +14,13 @@ function App() {
 	const [localCode, setLocalCode] = useState(""); //本身的控制码
 	const [controlText, setControlText] = useState(""); //控制码的文案
 	const login = async () => {
-		//登录状态是在主进程维护，通过主进程来处理ipc事件
-		console.log("111");
 		let code = await ipcRenderer.invoke("login");
-		if (!code) {
-			return setLocalCode(code);
-		} //本身控制码重新赋值
+		setLocalCode(code);
 	};
 	useEffect(() => {
-		login();
-		ipcRenderer.on("control-state-change", handleControlState); //监听ipc事件，从主进程传过来的，说明现在的控制状态是否发生了改变
+		login(); //加载完成发送登录获取随机码
+		ipcRenderer.on("control-state-change", handleControlState);
 		return () => {
-			//监听函数之后，最好清理掉这个函数(退出时)
 			ipcRenderer.removeListener(
 				"control-state-change",
 				handleControlState
@@ -33,11 +28,9 @@ function App() {
 		};
 	}, []);
 	const startControl = (remoteCode) => {
-		//发起一个请求，想去控制控制码对应的用户
 		ipcRenderer.send("control", remoteCode);
 	};
 	const handleControlState = (e, name, type) => {
-		//状态文案的改变
 		let text = "";
 		if (type === 1) {
 			//控制别人

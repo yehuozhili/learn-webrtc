@@ -24,12 +24,12 @@ function create() {
 		win.loadURL("http://localhost:3000");
 	} else {
 		win.loadFile(
+			//这里是react打包后的目录
 			path.resolve(__dirname, "../../renderer/pages/main/index.html")
 		);
 	}
 }
 function send(channel, ...args) {
-	//接收信息
 	win.webContents.send(channel, ...args);
 }
 module.exports = { create, send };

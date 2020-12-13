@@ -6,7 +6,7 @@
  * @FilePath: \electroncamp\app\renderer\src\main\src\controll.js
  */
 //被控制端方面进行的回应，媒体流的监听
-const { desktopCapturer } = window.require("electron");
+const { desktopCapturer, ipcRenderer } = window.require("electron");
 
 function getScreenStream() {
 	return new Promise((resolve, reject) => {
@@ -39,23 +39,34 @@ function getScreenStream() {
 
 const pc = new window.RTCPeerConnection({});
 async function createAnswer(offer) {
-	//回应函数
 	let screenStream = await getScreenStream(); //获取媒体流
 	pc.addStream(screenStream); //添加媒体流
 	await pc.setRemoteDescription(offer);
 	await pc.setLocalDescription(await pc.createAnswer());
-	console.log("answer", JSON.stringify(pc.localDescription));
 	return pc.localDescription;
 }
-window.createAnswer = createAnswer; //方便在控制台上操作
+
+ipcRenderer.on("offer", async (e, offer) => {
+	let answer = await createAnswer(offer);
+	ipcRenderer.send("forward", "answer", {
+		type: answer.type,
+		sdp: answer.sdp,
+	});
+});
+
 pc.onicecandidate = function (e) {
-	//触发此事件函数
-	console.log("candidate", JSON.stringify(e.candidate));
+	if (e.candidate) {
+		ipcRenderer.send(
+			"forward",
+			"puppet-candidate",
+			JSON.stringify(e.candidate)
+		);
+	}
 };
+
 let candidates = []; //缓存的效果
 async function addIceCandidate(candidate) {
 	if (candidate) {
-		//可能结果为null
 		candidates.push(candidate);
 	}
 	if (pc.remoteDescription && pc.remoteDescription.type) {
@@ -65,4 +76,24 @@ async function addIceCandidate(candidate) {
 		candidates = []; //清空数据
 	}
 }
-window.addIceCandidate = addIceCandidate;
+ipcRenderer.on("candidate", (e, candidate) => {
+	addIceCandidate(candidate);
+});
+// 实测不通
+// pc.ondatachannel = (e) => {
+// 	//监听datachannel事件跟上文代码相呼应
+// 	console.log("datachannel", e);
+// 	e.channel.onopen = (e) => {
+// 		console.log("onopen", e);
+// 	};
+// 	e.channel.onmessage = (e) => {
+// 		const { type, data } = JSON.parse(e.data); //获取控制端robotjs数据
+// 		if (type === "mouse") {
+// 			data.screen = {
+// 				width: window.screen.width,
+// 				height: window.screen.height,
+// 			};
+// 		}
+// 		ipcRenderer.send("robot", type, data);
+// 	};
+// };
